@@ -19,19 +19,22 @@ const App = () => {
             ? JSON.parse(localStorage.getItem("board"))
             : [...Array(16)].map(() => 0)
     );
+    const [next, setNext] = useState(false);
+    const [newLoad, setNewLoad] = useState(true);
 
     useEffect(() => {
         localStorage.setItem("board", JSON.stringify(board));
     }, [board]);
 
-    const genNewNumber = () => {
+    useEffect(() => {
+        if (newLoad) return;
         const index = getIndex();
         if (index === -1) return;
         setBoard((current) => {
             current[index] = 1;
             return [...current];
         });
-    };
+    }, [next]);
 
     const getIndex = () => {
         if (![...board].includes(0)) return -1;
@@ -46,8 +49,8 @@ const App = () => {
     const setupNewGame = () => {
         setBoard([...Array(16)].map(() => 0));
         setScore(0);
-        genNewNumber();
-        genNewNumber();
+        setNewLoad(false);
+        setNext((current) => !current);
         localStorage.removeItem("prevBoard");
     };
 
@@ -58,8 +61,11 @@ const App = () => {
         }
     };
 
-    const handleKeyDown = (e) => {
-        // console.log(e.keyCode, e.key);
+    const handleKeyDown = async (e) => {
+        e.preventDefault();
+        // console.log(e.keyCode, e.key, e.ctrlKey);
+        // if (handlingEvent) return;
+        // await setHandlingEvent(true);
         const KEYS = {
             37: shiftToLeft,
             38: shiftToUp,
@@ -71,11 +77,16 @@ const App = () => {
             if (!arraysEqual(newBoard, board)) {
                 // console.log(newBoard, board);
                 localStorage.setItem("prevBoard", JSON.stringify(board));
+                setNewLoad(false);
                 setBoard(newBoard);
-                // setNext((current) => !current);
-                genNewNumber();
+                setNext((current) => !current);
             }
+        } else if (e.keyCode === 90 && e.ctrlKey) {
+            undoMove();
+        } else if (e.keyCode === 77 && e.ctrlKey) {
+            setupNewGame();
         }
+        // await setHandlingEvent(false);
     };
     return (
         <div className="app" tabIndex="0" onKeyDown={handleKeyDown}>
