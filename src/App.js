@@ -105,6 +105,29 @@ const App = () => {
         }
     };
 
+    const postShift = (board_shifted) => {
+        const newBoard = board_shifted.board;
+        if (!arraysEqual(newBoard, board)) {
+            localStorage.setItem("prevBoard", JSON.stringify(board));
+            setNewLoad(false);
+            setBoard(newBoard);
+            // 2 ** 11 = 2048
+            // console.log(newBoard);
+            if (
+                gameStatus === GAME_STATUSES.IN_GAME &&
+                [...newBoard].includes(11)
+            ) {
+                // console.log(gameStatus, GAME_STATUSES.IN_GAME, newBoard);
+                setGameStatus(GAME_STATUSES.GOT_TO_2048);
+            } else if (gameStatus === GAME_STATUSES.GOT_TO_2048) {
+                setGameStatus(GAME_STATUSES.POST_2048);
+            }
+
+            setScore((current) => current + board_shifted.score);
+            setNext((current) => !current);
+        }
+    };
+
     const handleKeyDown = async (e) => {
         e.preventDefault();
         // console.log(e.keyCode, e.altKey);
@@ -116,27 +139,8 @@ const App = () => {
         };
         if (e.keyCode in KEYS) {
             const board_shifted = KEYS[e.keyCode](board);
+            postShift(board_shifted);
             // console.log(board_shifted);
-            const newBoard = board_shifted.board;
-            if (!arraysEqual(newBoard, board)) {
-                localStorage.setItem("prevBoard", JSON.stringify(board));
-                setNewLoad(false);
-                setBoard(newBoard);
-                // 2 ** 11 = 2048
-                // console.log(newBoard);
-                if (
-                    gameStatus === GAME_STATUSES.IN_GAME &&
-                    [...newBoard].includes(11)
-                ) {
-                    // console.log(gameStatus, GAME_STATUSES.IN_GAME, newBoard);
-                    setGameStatus(GAME_STATUSES.GOT_TO_2048);
-                } else if (gameStatus === GAME_STATUSES.GOT_TO_2048) {
-                    setGameStatus(GAME_STATUSES.POST_2048);
-                }
-
-                setScore((current) => current + board_shifted.score);
-                setNext((current) => !current);
-            }
         } else if (e.keyCode === 90 && e.ctrlKey) {
             undoMove();
         } else if (e.keyCode === 78 && e.altKey) {
@@ -155,6 +159,7 @@ const App = () => {
                 gameStatus={gameStatus}
                 setGameStatus={setGameStatus}
                 setupNewGame={setupNewGame}
+                postShift={postShift}
             />
             <Footer />
         </div>
