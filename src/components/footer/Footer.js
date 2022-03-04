@@ -12,6 +12,7 @@ const Footer = () => {
             <p className="desc">
                 This is just <span className="_2048">2048</span>.
             </p>
+            <p className="desc">Who needs animation? Not me!</p>
             <div className="socials-container">
                 <a className="social-icon" href="https://github.com/yahyafati">
                     <AiFillGithub />
