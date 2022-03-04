@@ -1,4 +1,6 @@
 import React from "react";
+import { GAME_STATUSES } from "../../App";
+import GameOver from "./GameOver";
 
 const CELL_COLORS = [
     "",
@@ -28,10 +30,16 @@ const isValidBoard = (board) => {
     }
     return true;
 };
-const Board = ({ board }) => {
+const Board = ({ board, gameStatus, setGameStatus, setupNewGame }) => {
     if (!isValidBoard(board)) return <></>;
     return (
         <div className="board">
+            {gameStatus === GAME_STATUSES.GOT_TO_2048 && (
+                <GameOver
+                    setGameStatus={setGameStatus}
+                    setupNewGame={setupNewGame}
+                />
+            )}
             {[...Array(16).keys()].map((index) => {
                 const item = board[index];
                 return (

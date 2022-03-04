@@ -25,7 +25,9 @@ const setColumn = (column, mBoard, colIndex) => {
 
 const shift = (row, reverse = false) => {
     if (reverse) row.reverse();
+
     let prevIndex = 0;
+    let score = 0;
     for (let j = 1; j < row.length; j++) {
         const item = row[j];
         if (item === 0) continue;
@@ -35,44 +37,49 @@ const shift = (row, reverse = false) => {
         } else if (item === row[prevIndex]) {
             row[j] = 0;
             row[prevIndex++]++;
+            score += Math.pow(2, item) * 2;
         } else {
             row[j] = 0;
             row[++prevIndex] = item;
         }
     }
+
     if (reverse) row.reverse();
+    return score;
 };
 
 export const shiftToLeft = (board) => {
     const mBoard = to_multi_array(board);
-    mBoard.forEach((row) => shift(row));
-    return mBoard.flat();
+    let score = 0;
+    mBoard.forEach((row) => (score += shift(row)));
+    return { board: mBoard.flat(), score };
 };
 
 export const shiftToRight = (board) => {
     const mBoard = to_multi_array(board);
-
-    mBoard.forEach((row) => shift(row, true));
-    return mBoard.flat();
+    let score = 0;
+    mBoard.forEach((row) => (score += shift(row, true)));
+    return { board: mBoard.flat(), score };
 };
 
 export const shiftToUp = (board) => {
     const mBoard = to_multi_array(board);
+    let score = 0;
     for (let colIndex = 0; colIndex < 4; colIndex++) {
         const column = getColumn(mBoard, colIndex);
-        shift(column);
+        score += shift(column);
         setColumn(column, mBoard, colIndex);
     }
-    return mBoard.flat();
+    return { board: mBoard.flat(), score };
 };
 
 export const shiftToDown = (board) => {
     const mBoard = to_multi_array(board);
-
+    let score = 0;
     for (let colIndex = 0; colIndex < 4; colIndex++) {
         const column = getColumn(mBoard, colIndex);
-        shift(column, true);
+        score += shift(column, true);
         setColumn(column, mBoard, colIndex);
     }
-    return mBoard.flat();
+    return { board: mBoard.flat(), score };
 };
