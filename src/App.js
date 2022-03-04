@@ -107,6 +107,7 @@ const App = () => {
 
     const handleKeyDown = async (e) => {
         e.preventDefault();
+        // console.log(e.keyCode, e.altKey);
         const KEYS = {
             37: shiftToLeft,
             38: shiftToUp,
@@ -138,7 +139,7 @@ const App = () => {
             }
         } else if (e.keyCode === 90 && e.ctrlKey) {
             undoMove();
-        } else if (e.keyCode === 77 && e.ctrlKey) {
+        } else if (e.keyCode === 78 && e.altKey) {
             setupNewGame();
         }
     };
