@@ -1,10 +1,10 @@
 import React from "react";
 
-const ButtonsContainer = ({ setupNewGame }) => {
+const ButtonsContainer = ({ setupNewGame, undoMove }) => {
     return (
         <div className="buttons-container">
-            <button onClick={(e) => setupNewGame()}>New Game</button>
-            <button>Undo</button>
+            <button onClick={setupNewGame}>New Game</button>
+            <button onClick={undoMove}>Undo</button>
         </div>
     );
 };

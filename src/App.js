@@ -14,8 +14,24 @@ import {
 const App = () => {
     const [score, setScore] = useState(12535);
     const [highScore, setHighScore] = useState(4257896);
-    const [board, setBoard] = useState([...Array(16)].map(() => 0));
-    const [next, setNext] = useState(true);
+    const [board, setBoard] = useState(
+        localStorage.getItem("board")
+            ? JSON.parse(localStorage.getItem("board"))
+            : [...Array(16)].map(() => 0)
+    );
+
+    useEffect(() => {
+        localStorage.setItem("board", JSON.stringify(board));
+    }, [board]);
+
+    const genNewNumber = () => {
+        const index = getIndex();
+        if (index === -1) return;
+        setBoard((current) => {
+            current[index] = 1;
+            return [...current];
+        });
+    };
 
     const getIndex = () => {
         if (![...board].includes(0)) return -1;
@@ -30,20 +46,17 @@ const App = () => {
     const setupNewGame = () => {
         setBoard([...Array(16)].map(() => 0));
         setScore(0);
-        setNext((current) => !current);
+        genNewNumber();
+        genNewNumber();
+        localStorage.removeItem("prevBoard");
     };
 
-    useEffect(() => {
-        const index = getIndex();
-        if (index === -1) {
-            // console.log("Game Over");
-            return;
+    const undoMove = () => {
+        if (localStorage.getItem("prevBoard")) {
+            setBoard(JSON.parse(localStorage.getItem("prevBoard")));
+            localStorage.removeItem("prevBoard");
         }
-        setBoard((current) => {
-            current[index] = 1;
-            return [...current];
-        });
-    }, [next]);
+    };
 
     const handleKeyDown = (e) => {
         // console.log(e.keyCode, e.key);
@@ -57,15 +70,17 @@ const App = () => {
             const newBoard = KEYS[e.keyCode](board);
             if (!arraysEqual(newBoard, board)) {
                 // console.log(newBoard, board);
+                localStorage.setItem("prevBoard", JSON.stringify(board));
                 setBoard(newBoard);
-                setNext((current) => !current);
+                // setNext((current) => !current);
+                genNewNumber();
             }
         }
     };
     return (
         <div className="app" tabIndex="0" onKeyDown={handleKeyDown}>
             <Header score={score} highScore={highScore} />
-            <ButtonsContainer setupNewGame={setupNewGame} />
+            <ButtonsContainer setupNewGame={setupNewGame} undoMove={undoMove} />
             <Board board={board} />
             <Footer />
         </div>
