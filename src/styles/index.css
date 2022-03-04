@@ -11,6 +11,10 @@ body {
   font-family: "Ubuntu Mono", monospace;
 }
 
+a {
+  color: inherit;
+}
+
 button {
   cursor: pointer;
   background-color: transparent;
@@ -197,5 +201,42 @@ button:focus {
   height: 100%;
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.app footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.app footer .desc {
+  font-size: 1.5rem;
+  color: goldenrod;
+}
+
+.app footer .desc ._2048 {
+  font-weight: bold;
+  color: gold;
+}
+
+.app footer .socials-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 0.5rem;
+}
+
+.app footer .socials-container .social-icon {
+  font-size: 2rem;
 }
 /*# sourceMappingURL=index.css.map */

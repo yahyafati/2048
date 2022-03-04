@@ -23,13 +23,16 @@ const setColumn = (column, mBoard, colIndex) => {
     mBoard.forEach((row, rowIndex) => (row[colIndex] = column[rowIndex]));
 };
 
-const shift = (row, reverse = false) => {
+const shift = (row, isPossible = false, reverse = false) => {
     if (reverse) row.reverse();
 
     let prevIndex = 0;
     let score = 0;
     for (let j = 1; j < row.length; j++) {
         const item = row[j];
+        if (score > 0 && isPossible) {
+            return score;
+        }
         if (item === 0) continue;
         if (row[prevIndex] === 0) {
             row[j] = 0;
@@ -48,38 +51,54 @@ const shift = (row, reverse = false) => {
     return score;
 };
 
-export const shiftToLeft = (board) => {
+export const shiftToLeft = (board, isPossible = false) => {
     const mBoard = to_multi_array(board);
     let score = 0;
-    mBoard.forEach((row) => (score += shift(row)));
+    mBoard.forEach((row) => (score += shift(row, isPossible)));
     return { board: mBoard.flat(), score };
 };
 
-export const shiftToRight = (board) => {
+export const shiftToRight = (board, isPossible = false) => {
     const mBoard = to_multi_array(board);
     let score = 0;
-    mBoard.forEach((row) => (score += shift(row, true)));
+    mBoard.forEach((row) => (score += shift(row, isPossible, true)));
     return { board: mBoard.flat(), score };
 };
 
-export const shiftToUp = (board) => {
+export const shiftToUp = (board, isPossible = false) => {
     const mBoard = to_multi_array(board);
     let score = 0;
     for (let colIndex = 0; colIndex < 4; colIndex++) {
         const column = getColumn(mBoard, colIndex);
-        score += shift(column);
+        score += shift(column, isPossible);
         setColumn(column, mBoard, colIndex);
     }
     return { board: mBoard.flat(), score };
 };
 
-export const shiftToDown = (board) => {
+export const shiftToDown = (board, isPossible = false) => {
     const mBoard = to_multi_array(board);
     let score = 0;
     for (let colIndex = 0; colIndex < 4; colIndex++) {
         const column = getColumn(mBoard, colIndex);
-        score += shift(column, true);
+        score += shift(column, isPossible, true);
         setColumn(column, mBoard, colIndex);
     }
     return { board: mBoard.flat(), score };
+};
+
+export const has_moves_available = (board) => {
+    // console.log("B", board);
+    // console.log("L", shiftToLeft(board, true));
+    // console.log("R", shiftToRight(board, true));
+    // console.log("U", shiftToUp(board, true));
+    // console.log("D", shiftToDown(board, true));
+    // console.log("0", [...board].includes(0));
+    return (
+        [...board].includes(0) ||
+        shiftToLeft(board, true).score > 0 ||
+        shiftToRight(board, true).score > 0 ||
+        shiftToUp(board, true).score > 0 ||
+        shiftToDown(board, true).score > 0
+    );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { GAME_STATUSES } from "../../App";
 import GameOver from "./GameOver";
+import ReachedGoal from "./ReachedGoal";
 
 const CELL_COLORS = [
     "",
@@ -35,10 +36,13 @@ const Board = ({ board, gameStatus, setGameStatus, setupNewGame }) => {
     return (
         <div className="board">
             {gameStatus === GAME_STATUSES.GOT_TO_2048 && (
-                <GameOver
+                <ReachedGoal
                     setGameStatus={setGameStatus}
                     setupNewGame={setupNewGame}
                 />
+            )}
+            {gameStatus === GAME_STATUSES.GAME_OVER && (
+                <GameOver setupNewGame={setupNewGame} />
             )}
             {[...Array(16).keys()].map((index) => {
                 const item = board[index];

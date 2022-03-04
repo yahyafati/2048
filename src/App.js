@@ -5,6 +5,7 @@ import ButtonsContainer from "./components/header/ButtonsContainer";
 import Header from "./components/header/Header";
 import { arraysEqual } from "./helpers/Helpers";
 import {
+    has_moves_available,
     shiftToDown,
     shiftToLeft,
     shiftToRight,
@@ -43,6 +44,13 @@ const App = () => {
     );
 
     useEffect(() => {
+        if (!has_moves_available(board)) {
+            console.log("Game Is Over");
+            setGameStatus(GAME_STATUSES.GAME_OVER);
+        }
+    }, [board]);
+
+    useEffect(() => {
         localStorage.setItem("board", JSON.stringify(board));
         localStorage.setItem("highScore", String(highScore));
         localStorage.setItem("gameStatus", String(gameStatus));
@@ -74,8 +82,17 @@ const App = () => {
     };
 
     const setupNewGame = () => {
+        if (
+            gameStatus !== GAME_STATUSES.GAME_OVER &&
+            // gameStatus === GAME_STATUSES.GOT_TO_2048 ||
+            !confirm(
+                "You are going to lose your current progress. Are you sure?"
+            )
+        )
+            return;
         setBoard([...Array(16)].map(() => 0));
         setScore(0);
+        setGameStatus(GAME_STATUSES.IN_GAME);
         setNewLoad(false);
         setNext((current) => !current);
         localStorage.removeItem("prevBoard");
@@ -98,18 +115,24 @@ const App = () => {
         };
         if (e.keyCode in KEYS) {
             const board_shifted = KEYS[e.keyCode](board);
-            console.log(board_shifted);
+            // console.log(board_shifted);
             const newBoard = board_shifted.board;
             if (!arraysEqual(newBoard, board)) {
                 localStorage.setItem("prevBoard", JSON.stringify(board));
                 setNewLoad(false);
                 setBoard(newBoard);
                 // 2 ** 11 = 2048
-                if (gameStatus === GAME_STATUSES.IN_GAME && 11 in newBoard) {
+                // console.log(newBoard);
+                if (
+                    gameStatus === GAME_STATUSES.IN_GAME &&
+                    [...newBoard].includes(11)
+                ) {
+                    // console.log(gameStatus, GAME_STATUSES.IN_GAME, newBoard);
                     setGameStatus(GAME_STATUSES.GOT_TO_2048);
                 } else if (gameStatus === GAME_STATUSES.GOT_TO_2048) {
                     setGameStatus(GAME_STATUSES.POST_2048);
                 }
+
                 setScore((current) => current + board_shifted.score);
                 setNext((current) => !current);
             }
@@ -130,6 +153,7 @@ const App = () => {
                 board={board}
                 gameStatus={gameStatus}
                 setGameStatus={setGameStatus}
+                setupNewGame={setupNewGame}
             />
             <Footer />
         </div>

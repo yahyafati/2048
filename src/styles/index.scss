@@ -11,6 +11,10 @@ body {
     font-family: "Ubuntu Mono", monospace;
 }
 
+a {
+    color: inherit;
+}
+
 button {
     cursor: pointer;
     background-color: transparent;
@@ -156,6 +160,32 @@ button {
                 height: 100%;
                 font-size: 1.5rem;
                 font-weight: bold;
+            }
+        }
+    }
+
+    footer {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        text-align: center;
+
+        .desc {
+            font-size: 1.5rem;
+            color: goldenrod;
+            ._2048 {
+                font-weight: bold;
+                color: gold;
+            }
+        }
+
+        .socials-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            .social-icon {
+                font-size: 2rem;
             }
         }
     }
